@@ -1,30 +1,29 @@
 using System;
 using System.Linq;
-using System.Linq.Dynamic;
 using System.Collections.Generic;
 	
 namespace MVC5HomeWork.Models
 {   
-	public  class VW_CompanyListRepository : EFRepository<VW_CompanyList>, IVW_CompanyListRepository
+	public  class VW_CompanyList_2Repository : EFRepository<VW_CompanyList_2>, IVW_CompanyList_2Repository
 	{
-        public IQueryable<VW_CompanyList> Query(QueryCompanyModel model)
+        public IQueryable<VW_CompanyList_2> Query(QueryCompanyModel model)
         {
             var data = base.All();
             if (!string.IsNullOrEmpty(model.CompanyName))
             {
-                data = data.Where(p => p.CompanyName.Contains(model.CompanyName));
+                //data = data.Where(p => p.«È¤á¦WºÙ.Contains(model.CompanyName));
             }
             return data.AsQueryable();
         }
 
-        public override byte[] ExportXLS(IQueryable<VW_CompanyList> entities, params string[] notExportCol)
+        public override byte[] ExportXLS(IQueryable<VW_CompanyList_2> entities, params string[] notExportCol)
         {
             var notCol = notExportCol.ToList();
             notCol.Add("CompanyId");
             return base.ExportXLS(entities, notCol.ToArray());
         }
 
-        public override byte[] ExportXLSX(IQueryable<VW_CompanyList> entities, params string[] notExportCol)
+        public override byte[] ExportXLSX(IQueryable<VW_CompanyList_2> entities, params string[] notExportCol)
         {
             var notCol = notExportCol.ToList();
             notCol.Add("CompanyId");
@@ -32,7 +31,7 @@ namespace MVC5HomeWork.Models
         }
     }
 
-    public  interface IVW_CompanyListRepository : IRepository<VW_CompanyList>
+	public  interface IVW_CompanyList_2Repository : IRepository<VW_CompanyList_2>
 	{
 
 	}

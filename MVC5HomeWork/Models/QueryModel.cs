@@ -10,6 +10,8 @@ namespace MVC5HomeWork.Models
     {
         public string sort { get; set; }
         public string sidx { get; set; }
+        public int page { get; set; }
+        public int pagesite { get; set; }
     }
 
     public class QueryCompanyModel : GridModel

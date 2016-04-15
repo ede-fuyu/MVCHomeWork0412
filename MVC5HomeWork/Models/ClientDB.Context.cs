@@ -29,5 +29,6 @@ namespace MVC5HomeWork.Models
         public virtual DbSet<客戶銀行資訊> 客戶銀行資訊 { get; set; }
         public virtual DbSet<客戶聯絡人> 客戶聯絡人 { get; set; }
         public virtual DbSet<VW_CompanyList> VW_CompanyList { get; set; }
+        public virtual DbSet<VW_CompanyList_2> VW_CompanyList_2 { get; set; }
     }
 }

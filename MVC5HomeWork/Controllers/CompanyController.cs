@@ -13,13 +13,13 @@ namespace MVC5HomeWork.Controllers
         // GET: HomeWork/Company
         public ActionResult Index()
         {
-            return View(0);
+            return View();
         }
 
         // GET: HomeWork/Company/List        
-        public ActionResult List()
+        public ActionResult List(QueryCompanyModel model)
         {
-            return View("Index", 1);
+            return View(ListRepo.Query(model));
         }
 
         public ActionResult Query()
@@ -49,20 +49,20 @@ namespace MVC5HomeWork.Controllers
             return File(CompanyRepo.ExportXLSX(CompanyRepo.Query(model)), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "客戶資料.xlsx");
         }
 
-        public ActionResult QueryList(QueryCompanyModel model)
-        {
-            return PartialView(ListRepo.Query(model));
-        }
+        //public ActionResult QueryList(QueryCompanyModel model)
+        //{
+        //    //return PartialView(ListRepo.Query(model));
+        //}
 
-        public ActionResult ExportXLSList(QueryCompanyModel model)
-        {
-            return File(ListRepo.ExportXLS(ListRepo.Query(model)), "application/vnd.ms-excel", "客戶清單資料.xls");
-        }
+        //public ActionResult ExportXLSList(QueryCompanyModel model)
+        //{
+        //    //return File(ListRepo.ExportXLS(ListRepo.Query(model)), "application/vnd.ms-excel", "客戶清單資料.xls");
+        //}
 
-        public ActionResult ExportXLSXList(QueryCompanyModel model)
-        {
-            return File(ListRepo.ExportXLSX(ListRepo.Query(model)), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "客戶清單資料.xlsx");
-        }
+        //public ActionResult ExportXLSXList(QueryCompanyModel model)
+        //{
+        //    //return File(ListRepo.ExportXLSX(ListRepo.Query(model)), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "客戶清單資料.xlsx");
+        //}
 
         public ActionResult Edit(int id)
         {

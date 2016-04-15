@@ -21,6 +21,20 @@ namespace MVC5HomeWork.Models
 			return repository;
 		}		
 
+		public static VW_CompanyList_2Repository GetVW_CompanyList_2Repository()
+		{
+			var repository = new VW_CompanyList_2Repository();
+			repository.UnitOfWork = GetUnitOfWork();
+			return repository;
+		}
+
+		public static VW_CompanyList_2Repository GetVW_CompanyList_2Repository(IUnitOfWork unitOfWork)
+		{
+			var repository = new VW_CompanyList_2Repository();
+			repository.UnitOfWork = unitOfWork;
+			return repository;
+		}		
+
 		public static 客戶資料Repository Get客戶資料Repository()
 		{
 			var repository = new 客戶資料Repository();

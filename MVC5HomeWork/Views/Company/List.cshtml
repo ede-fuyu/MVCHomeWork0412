@@ -1,0 +1,36 @@
+﻿@model IEnumerable<MVC5HomeWork.Models.VW_CompanyList>
+
+@{
+    ViewBag.Title = "客戶聯關資料表";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.CompanyName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.聯絡人數量)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.銀行帳戶數量)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.CompanyName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.聯絡人數量)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.銀行帳戶數量)
+        </td>
+    </tr>
+}
+</table>

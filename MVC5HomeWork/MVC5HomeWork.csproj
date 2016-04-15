@@ -261,9 +261,9 @@
     <Compile Include="Models\ExcelRepository.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\IRepository.EF6.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
       <DependentUpon>IRepository.EF6.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
     </Compile>
     <Compile Include="Models\IUnitOfWork.cs">
       <DependentUpon>IRepository.EF6.tt</DependentUpon>
@@ -285,6 +285,15 @@
       <DependentUpon>EFGeneratePartialClass.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\VW_CompanyListRepository.cs">
+      <DependentUpon>IRepository.EF6.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\VW_CompanyList_2.cs">
+      <DependentUpon>ClientDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\VW_CompanyList_2.Partial.cs">
+      <DependentUpon>EFGeneratePartialClass.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\VW_CompanyList_2Repository.cs">
       <DependentUpon>IRepository.EF6.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\客戶聯絡人.cs">
@@ -402,6 +411,7 @@
     <Content Include="Views\Manage\ManageLogins.cshtml" />
     <Content Include="Views\Manage\SetPassword.cshtml" />
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
+    <Content Include="Views\Company\List.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

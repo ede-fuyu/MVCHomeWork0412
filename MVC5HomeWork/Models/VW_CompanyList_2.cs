@@ -12,10 +12,10 @@ namespace MVC5HomeWork.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class VW_CompanyList
+    public partial class VW_CompanyList_2
     {
         public int Id { get; set; }
-        public string CompanyName { get; set; }
+        public string 客戶名稱 { get; set; }
         public Nullable<int> 銀行帳戶數量 { get; set; }
         public Nullable<int> 聯絡人數量 { get; set; }
     }
