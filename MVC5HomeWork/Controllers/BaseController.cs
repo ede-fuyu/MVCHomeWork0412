@@ -8,7 +8,7 @@ using System.Web.Mvc;
 namespace MVC5HomeWork.Controllers
 {
     [TimeLogToDebug]
-    //[Authorize]
+    [Authorize(Roles ="Admin")]
     public class BaseController : Controller
     {
         protected VW_CompanyListRepository ListRepo = RepositoryHelper.GetVW_CompanyListRepository();

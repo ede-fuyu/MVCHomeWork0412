@@ -24,9 +24,19 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("About", "About", "Home")</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                    <li>@Html.ActionLink("首頁", "Index", "Home")</li>
+                    @if (Request.IsAuthenticated)
+                    {
+                    <li>@Html.ActionLink("About", "關於", "Home")</li>
+                    <li>@Html.ActionLink("Contact", "聯絡", "Home")</li>
+                    if (User.IsInRole("Admin"))
+                    {
+                        <li>@Html.ActionLink("客戶聯關資料表", "List", "Company")</li>
+                        <li>@Html.ActionLink("客戶資料管理", "Index", "Company")</li>
+                        <li>@Html.ActionLink("客戶銀行資訊管理", "Index", "BankInfo")</li>
+                        <li>@Html.ActionLink("客戶聯絡人管理", "Index", "Contact")</li>
+                    }
+                    }
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>
@@ -36,7 +46,7 @@
         <ul class="breadcrumb">
             <li>
                 <i class="icon-home"></i>
-                <a href="@Url.Action("Index", "Home")">Home</a>
+                <a href="@Url.Action("Index", "Home")">首頁</a>
             </li>
             @RenderSection("breadcrumb", false)
             @if (!IsSectionDefined("breadcrumb"))

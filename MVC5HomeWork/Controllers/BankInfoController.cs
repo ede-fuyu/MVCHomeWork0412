@@ -33,19 +33,30 @@ namespace MVC5HomeWork.Controllers
             return View("Edit", BankRepo.Find(0));
         }
 
+        [HandleError(ExceptionType = typeof(InvalidOperationException), View = "Error2")]
         public ActionResult Edit(int id)
         {
-            return View(BankRepo.Find(id));
+            var data = BankRepo.Find(id);
+            if (data == null)
+            {
+                throw new InvalidOperationException("操作錯誤");
+            }
+            return View(data);
         }
 
-        [HandleError(ExceptionType = typeof(ArgumentException), View = "Error2")]
+        [HandleError(ExceptionType = typeof(InvalidOperationException), View = "Error2")]
         public ActionResult Details(int id)
         {
             if (id == 0)
             {
                 throw new ArgumentException("參數錯誤");
             }
-            return View(BankRepo.Find(id));
+            var data = BankRepo.Find(id);
+            if (data == null)
+            {
+                throw new InvalidOperationException("操作錯誤");
+            }
+            return View(data);
         }
 
         public ActionResult Save(客戶銀行資訊 model)

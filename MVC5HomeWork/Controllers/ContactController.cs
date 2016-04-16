@@ -35,19 +35,30 @@ namespace MVC5HomeWork.Controllers
             return View("Edit", ContactRepo.Find(0));
         }
 
+        [HandleError(ExceptionType = typeof(InvalidOperationException), View = "Error2")]
         public ActionResult Edit(int id)
         {
-            return View(ContactRepo.Find(id));
+            var data = ContactRepo.Find(id);
+            if (data == null)
+            {
+                throw new InvalidOperationException("操作錯誤");
+            }
+            return View(data);
         }
 
-        [HandleError(ExceptionType = typeof(ArgumentException), View = "Error2")]
+        [HandleError(ExceptionType = typeof(InvalidOperationException), View = "Error2")]
         public ActionResult Details(int id)
         {
             if (id == 0)
             {
                 throw new ArgumentException("參數錯誤");
             }
-            return View(ContactRepo.Find(id));
+            var data = ContactRepo.Find(id);
+            if (data == null)
+            {
+                throw new InvalidOperationException("操作錯誤");
+            }
+            return View(data);
         }
 
         public ActionResult Save(客戶聯絡人 model)

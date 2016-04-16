@@ -1,112 +1,83 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Web;
+using System.Web.Security;
 
 namespace MVC5HomeWork.Models
 {
-    public class ExternalLoginConfirmationViewModel
-    {
-        [Required]
-        [Display(Name = "Email")]
-        public string Email { get; set; }
-    }
-
-    public class ExternalLoginListViewModel
-    {
-        public string ReturnUrl { get; set; }
-    }
-
-    public class SendCodeViewModel
-    {
-        public string SelectedProvider { get; set; }
-        public ICollection<System.Web.Mvc.SelectListItem> Providers { get; set; }
-        public string ReturnUrl { get; set; }
-        public bool RememberMe { get; set; }
-    }
-
-    public class VerifyCodeViewModel
-    {
-        [Required]
-        public string Provider { get; set; }
-
-        [Required]
-        [Display(Name = "Code")]
-        public string Code { get; set; }
-        public string ReturnUrl { get; set; }
-
-        [Display(Name = "Remember this browser?")]
-        public bool RememberBrowser { get; set; }
-
-        public bool RememberMe { get; set; }
-    }
-
-    public class ForgotViewModel
-    {
-        [Required]
-        [Display(Name = "Email")]
-        public string Email { get; set; }
-    }
-
     public class LoginViewModel
     {
-        [Required]
-        [Display(Name = "Email")]
-        [EmailAddress]
-        public string Email { get; set; }
+        [Display(Name = "帳號")]
+        [Required(ErrorMessage = "帳號必需填寫")]
+        public string Account { get; set; }
 
-        [Required]
-        [DataType(DataType.Password)]
-        [Display(Name = "Password")]
-        public string Password { get; set; }
-
-        [Display(Name = "Remember me?")]
-        public bool RememberMe { get; set; }
+        [Display(Name = "密碼")]
+        [Required(ErrorMessage = "密碼必需填寫")]
+        public string PassWord { get; set; }
     }
 
-    public class RegisterViewModel
+    public class RegisterViewModel : IValidatableObject
     {
-        [Required]
-        [EmailAddress]
-        [Display(Name = "Email")]
-        public string Email { get; set; }
+        [Display(Name = "統一編號")]
+        [Required(ErrorMessage = "統一編號必需填寫")]
+        public string CompanyNo { get; set; }
 
-        [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
-        [DataType(DataType.Password)]
-        [Display(Name = "Password")]
-        public string Password { get; set; }
+        [Display(Name = "帳號")]
+        [Required(ErrorMessage = "帳號必需填寫")]
+        public string Account { get; set; }
 
-        [DataType(DataType.Password)]
-        [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
-        public string ConfirmPassword { get; set; }
+        [Display(Name = "密碼")]
+        [MinLength(8, ErrorMessage = "密碼最少8個字")]
+        [Required(ErrorMessage = "密碼必需填寫")]
+        public string PassWord { get; set; }
+
+        [Display(Name = "確認密碼")]
+        [Compare("PassWord", ErrorMessage = "密碼與確認密碼不符")]
+        public string PassWord2 { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            客戶資料Entities db = new 客戶資料Entities();
+            if (db.客戶資料.Any(p => p.帳號.ToLower() == Account.ToLower()) || Account.ToLower().Contains("admin"))
+            {
+                yield return new ValidationResult("已有相同的帳號存在!!", new[] { "Account" });
+            }
+
+            if (!db.客戶資料.Any(p => p.統一編號 == CompanyNo))
+            {
+                yield return new ValidationResult("客戶資料不存在!!", new[] { "CompanyNo" });
+            }
+        }
     }
 
-    public class ResetPasswordViewModel
+    public class EditPasswdModel : IValidatableObject
     {
-        [Required]
-        [EmailAddress]
-        [Display(Name = "Email")]
-        public string Email { get; set; }
+        [Display(Name = "舊密碼")]
+        [Required(ErrorMessage = "舊密碼必需填寫")]
+        public string PassWord { get; set; }
+        
+        [Display(Name = "新密碼")]
+        [MinLength(8, ErrorMessage = "新密碼最少8個字")]
+        [NotEqualTo("PassWord", ErrorMessage = "不可以與舊密碼相同")]
+        [Required(ErrorMessage = "新密碼必需填寫")]
+        public string nPassWord { get; set; }
 
-        [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
-        [DataType(DataType.Password)]
-        [Display(Name = "Password")]
-        public string Password { get; set; }
+        [Display(Name = "確認新密碼")]
+        [Compare("nPassWord", ErrorMessage = "新密碼與確認新密碼不符")]
+        public string nPassWord2 { get; set; }
 
-        [DataType(DataType.Password)]
-        [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
-        public string ConfirmPassword { get; set; }
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            客戶資料Entities db = new 客戶資料Entities();
+            var userName = HttpContext.Current.User.Identity.Name;
+            string strPassword = FormsAuthentication.HashPasswordForStoringInConfigFile(PassWord + userName.ToLower(), "SHA1");
+            if (!db.客戶資料.Where(p=>p.帳號 == userName).Any(p => p.密碼 == strPassword))
+            {
+                yield return new ValidationResult("密碼輸入錯誤!!", new[] { "PassWord" });
+            }
 
-        public string Code { get; set; }
-    }
-
-    public class ForgotPasswordViewModel
-    {
-        [Required]
-        [EmailAddress]
-        [Display(Name = "Email")]
-        public string Email { get; set; }
+        }
     }
 }

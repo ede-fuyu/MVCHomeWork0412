@@ -12,7 +12,7 @@ namespace MVC5HomeWork.Models
 	{
         public override IQueryable<客戶資料> All()
         {
-            return base.All().Where(p => p.IsDelete == false);
+            return base.All().Where(p => p.IsDelete == false && p.客戶分類.ToLower() != "system");
         }
 
         public IQueryable<客戶資料> All(bool isAll)
@@ -101,6 +101,34 @@ namespace MVC5HomeWork.Models
             }
             entity.IsDelete = true;
             this.Save(entity);
+        }
+
+        internal void Register(RegisterViewModel data, string password)
+        {
+            var context = (客戶資料Entities)this.UnitOfWork.Context;
+            var userCompanyData = context.客戶資料.Where(p => p.統一編號 == data.CompanyNo).First();
+            userCompanyData.帳號 = data.Account;
+            userCompanyData.密碼 = password;
+            context.Entry(userCompanyData).State = EntityState.Modified;
+        }
+
+        internal void EditProfile(客戶資料 data, string userAcction)
+        {
+            var context = (客戶資料Entities)this.UnitOfWork.Context;
+            var userCompanyData = context.客戶資料.Where(p => p.帳號 == userAcction).First();
+            userCompanyData.電話 = data.電話;
+            userCompanyData.傳真 = data.傳真;
+            userCompanyData.地址 = data.地址;
+            userCompanyData.Email = data.Email;
+            context.Entry(userCompanyData).State = EntityState.Modified;
+        }
+
+        internal void EditPassWd(string Password, string userAcction)
+        {
+            var context = (客戶資料Entities)this.UnitOfWork.Context;
+            var userCompanyData = context.客戶資料.Where(p => p.帳號 == userAcction).First();
+            userCompanyData.密碼 = Password;
+            context.Entry(userCompanyData).State = EntityState.Modified;
         }
 
         public override byte[] ExportXLS(IQueryable<客戶資料> entities, params string[] notExportCol)

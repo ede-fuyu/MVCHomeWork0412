@@ -52,20 +52,31 @@ namespace MVC5HomeWork.Controllers
             return View("Edit", CompanyRepo.Find(0));
         }
 
+        [HandleError(ExceptionType = typeof(InvalidOperationException), View = "Error2")]
         public ActionResult Edit(int id)
         {
             ViewBag.CompanyType = new SelectList(CompanyRepo.All().Select(p => new { CompanyType = p.客戶分類 }).Distinct(), "CompanyType", "CompanyType");
-            return View(CompanyRepo.Find(id));
+            var data = CompanyRepo.Find(id);
+            if(data == null)
+            {
+                throw new InvalidOperationException("操作錯誤");
+            }
+            return View(data);
         }
 
-        [HandleError(ExceptionType = typeof(ArgumentException), View = "Error2")]
+        [HandleError(ExceptionType = typeof(InvalidOperationException), View = "Error2")]
         public ActionResult Details(int id)
         {
             if (id == 0)
             {
                 throw new ArgumentException("參數錯誤");
             }
-            return View(CompanyRepo.Find(id));
+            var data = CompanyRepo.Find(id);
+            if (data == null)
+            {
+                throw new InvalidOperationException("操作錯誤");
+            }
+            return View(data);
         }
 
         public ActionResult Save(客戶資料 model)

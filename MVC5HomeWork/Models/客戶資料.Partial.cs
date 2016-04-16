@@ -13,7 +13,7 @@ namespace MVC5HomeWork.Models
             客戶資料Entities db = new 客戶資料Entities();
 
             var data = db.客戶資料.Where(p => p.Id != Id).ToList();
-            if (!string.IsNullOrEmpty(帳號) && data.Any(p => p.帳號.ToLower() == 帳號.ToLower()))
+            if (!string.IsNullOrEmpty(帳號) && data.Where(p => !string.IsNullOrEmpty(p.帳號)).Any(p => p.帳號.ToLower() == 帳號.ToLower()))
             {
                 yield return new ValidationResult("已有相同的帳號存在", new[] { "帳號" });
             }
