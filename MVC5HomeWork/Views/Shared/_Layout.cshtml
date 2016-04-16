@@ -27,8 +27,8 @@
                     <li>@Html.ActionLink("首頁", "Index", "Home")</li>
                     @if (Request.IsAuthenticated)
                     {
-                    <li>@Html.ActionLink("About", "關於", "Home")</li>
-                    <li>@Html.ActionLink("Contact", "聯絡", "Home")</li>
+                    <li>@Html.ActionLink("關於", "About", "Home")</li>
+                    <li>@Html.ActionLink("連絡方式", "Contact", "Home")</li>
                     if (User.IsInRole("Admin"))
                     {
                         <li>@Html.ActionLink("客戶聯關資料表", "List", "Company")</li>
