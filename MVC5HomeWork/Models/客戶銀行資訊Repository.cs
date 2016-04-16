@@ -3,6 +3,7 @@ using System.Linq;
 using System.Linq.Dynamic;
 using System.Collections.Generic;
 using System.Data.Entity;
+using PagedList;
 
 namespace MVC5HomeWork.Models
 {   
@@ -28,28 +29,27 @@ namespace MVC5HomeWork.Models
         public IQueryable<客戶銀行資訊> Query(QueryBankModel model)
         {
             var data = this.All();
-
-            if (!string.IsNullOrEmpty(model.CompanyNo))
-            {
-                data = data.Where(p => p.客戶資料.統一編號 == model.CompanyNo);
-            }
-            if (!string.IsNullOrEmpty(model.CompanyName))
-            {
-                data = data.Where(p => p.客戶資料.客戶名稱.Contains(model.CompanyName));
-            }
             if (!string.IsNullOrEmpty(model.BankName))
             {
                 data = data.Where(p => p.帳戶名稱.Contains(model.BankName));
             }
-            if (model.BankNo != null)
+
+            if (!string.IsNullOrEmpty(model.sort))
             {
-                data = data.Where(p => p.銀行代碼 == model.BankNo);
+                data = data.OrderBy(model.sort + " " + model.sidx);
             }
-            if (!string.IsNullOrEmpty(model.AccountName))
+            else
             {
-                data = data.Where(p => p.帳戶名稱.Contains(model.AccountName));
+                data = data.OrderBy(p => p.Id);
             }
+
             return data.AsQueryable();
+        }
+
+        public IPagedList<客戶銀行資訊> Query(QueryBankModel model, int DefaultPageSite)
+        {
+            var data = this.Query(model);
+            return data.ToPagedList(model.Page ?? 1, model.PageSite ?? DefaultPageSite);
         }
 
         public IQueryable<客戶銀行資訊> Query(int companyid)
@@ -66,18 +66,6 @@ namespace MVC5HomeWork.Models
             else
             {
                 return new 客戶銀行資訊();
-            }
-        }
-
-        public 客戶銀行資訊 Find(int companyid, int bankid)
-        {
-            if (bankid != 0)
-            {
-                return this.All().FirstOrDefault(p => p.Id == bankid && p.客戶Id == companyid);
-            }
-            else
-            {
-                return new 客戶銀行資訊() { 客戶Id = companyid };
             }
         }
 

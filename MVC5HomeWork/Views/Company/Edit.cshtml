@@ -1,0 +1,117 @@
+﻿@model MVC5HomeWork.Models.客戶資料
+
+@{
+    ViewBag.Title = (Model.Id == 0 ? "新增" : "編輯") + "客戶資料";
+}
+@section breadcrumb {
+    <li><i class="icon-angle-right"></i><a href="#">客戶資料管理</a></li>
+    <li><i class="icon-angle-right"></i><a href="#">@ViewBag.Title</a></li>
+}
+<h2>@ViewBag.Title</h2>
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "formEdit", autocomplete = "off" }))
+{
+    <div class="form-horizontal">
+        @Html.HiddenFor(model => model.Id)
+        <div class="form-group">
+            @Html.LabelFor(model => model.客戶分類, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.客戶分類, new { htmlAttributes = new { @class = "form-control", id = "txtCompanyType" } })
+                @Html.DropDownList("dllCompanyType", (SelectList)ViewBag.CompanyType, (Model.Id == 0 ? "請選擇客戶分類" : "請選擇要更改的客戶分類"))
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.客戶名稱, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.客戶名稱, new { htmlAttributes = new { @class = "form-control", id = "txtCompanyName" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.統一編號, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.統一編號, new { htmlAttributes = new { @class = "form-control", id = "txtCompanyNo" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.電話, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.電話, new { htmlAttributes = new { @class = "form-control", id = "txtTel" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.傳真, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.傳真, new { htmlAttributes = new { @class = "form-control", id = "txtFax" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.地址, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.地址, new { htmlAttributes = new { @class = "form-control", id = "txtAddress" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <button type="button" class="btn btn-primary" onclick="$('#formEdit').submit();">儲存</button>
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("回客戶資料清單", "Index", null, new { @class = "btn btn-default" })
+</div>
+
+@section scripts {
+<script type="text/javascript">
+    $(function () {
+        $("#dllCompanyType").selectpicker({
+            noneSelectedText: "@(Model.Id == 0 ? "請選擇客戶分類" : "請選擇要更改的客戶分類")",
+            liveSearch: true,
+            width: 280
+        });
+
+        $("#dllCompanyType").change(function () {
+            $("#txtCompanyType").val($(this).val());
+            $(".txtCompanyType").remove();
+        });
+
+        $.validator.unobtrusive.parse("#formEdit");
+        $("#formEdit").makeValidationInline();
+        $("#formEdit").submit(function (e) {
+            e.preventDefault();
+            if ($("#formEdit").validate().valid()) {
+                BlockUIWindow("...客戶資料儲存中...");
+                $.ajax({
+                    url: "@Url.Action("Save")",
+                    type: 'POST',
+                    data: $("#formEdit").serialize(),
+                    success: function (data) {
+                        alert(data.message);
+                        if (data.isValid && $("#" + "@Html.IdFor(p => p.Id)").val() == 0) {
+                            if (confirm('是否繼續新增客戶資料?')) {
+                                ResetForm("formEdit");
+                            } else {
+                                $("#" + "@Html.IdFor(p => p.Id)").val(data.id);
+                            }
+                        }
+                        $.unblockUI();
+                    }
+                });
+            }
+        });
+    });
+</script>
+}

@@ -10,33 +10,30 @@ namespace MVC5HomeWork.Controllers
 {
     public class CompanyController : BaseController
     {
-        // GET: HomeWork/Company
-        public ActionResult Index()
-        {
-            return View();
-        }
-
-        // GET: HomeWork/Company/List        
+        #region 客戶聯關資料表
+        // GET: /Company/List        
         public ActionResult List(QueryCompanyModel model)
         {
-            return View(ListRepo.Query(model));
+            return View(ListRepo.Query(model, 1));
         }
 
-        public ActionResult Query()
+        public ActionResult ExportXLSList(QueryCompanyModel model)
         {
-            return PartialView(new QueryCompanyModel());
+            return File(ListRepo.ExportXLS(ListRepo.Query(model)), "application/vnd.ms-excel", "客戶清單資料.xls");
         }
 
-        public ActionResult QueryDataList(QueryCompanyModel model)
+        public ActionResult ExportXLSXList(QueryCompanyModel model)
         {
-            if (string.IsNullOrEmpty(model.sort))
-            {
-                return PartialView(CompanyRepo.Query(model));
-            }
-            else
-            {
-                return PartialView("PartialDataList", CompanyRepo.Query(model));
-            }
+            return File(ListRepo.ExportXLSX(ListRepo.Query(model)), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "客戶清單資料.xlsx");
+        }
+        #endregion
+
+        #region 客戶資料
+        // GET: /Company
+        public ActionResult Index(QueryCompanyModel model)
+        {
+            ViewBag.CompanyType = new SelectList(CompanyRepo.All().Select(p => new { CompanyType = p.客戶分類 }).Distinct(), "CompanyType", "CompanyType", model.CompanyType);
+            return View(CompanyRepo.Query(model, 5));
         }
 
         public ActionResult ExportXLSDataList(QueryCompanyModel model)
@@ -49,47 +46,38 @@ namespace MVC5HomeWork.Controllers
             return File(CompanyRepo.ExportXLSX(CompanyRepo.Query(model)), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "客戶資料.xlsx");
         }
 
-        //public ActionResult QueryList(QueryCompanyModel model)
-        //{
-        //    //return PartialView(ListRepo.Query(model));
-        //}
-
-        //public ActionResult ExportXLSList(QueryCompanyModel model)
-        //{
-        //    //return File(ListRepo.ExportXLS(ListRepo.Query(model)), "application/vnd.ms-excel", "客戶清單資料.xls");
-        //}
-
-        //public ActionResult ExportXLSXList(QueryCompanyModel model)
-        //{
-        //    //return File(ListRepo.ExportXLSX(ListRepo.Query(model)), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "客戶清單資料.xlsx");
-        //}
+        public ActionResult Create()
+        {
+            ViewBag.CompanyType = new SelectList(CompanyRepo.All().Select(p => new { CompanyType = p.客戶分類 }).Distinct(), "CompanyType", "CompanyType");
+            return View("Edit", CompanyRepo.Find(0));
+        }
 
         public ActionResult Edit(int id)
         {
-            //ViewBag.Code = new SelectList(CodeRepo.GetCode("CompanyType"), "value", "text");
-            return PartialView(CompanyRepo.Find(id));
+            ViewBag.CompanyType = new SelectList(CompanyRepo.All().Select(p => new { CompanyType = p.客戶分類 }).Distinct(), "CompanyType", "CompanyType");
+            return View(CompanyRepo.Find(id));
         }
 
-        public ActionResult Detail(int id)
+        [HandleError(ExceptionType = typeof(ArgumentException), View = "Error2")]
+        public ActionResult Details(int id)
         {
             if (id == 0)
             {
-                return PartialView(null);
+                throw new ArgumentException("參數錯誤");
             }
-            //ViewBag.Code = CodeRepo.GetCode((int)model.CompanyType, "CompanyType");
-            return PartialView(CompanyRepo.Find(id));
+            return View(CompanyRepo.Find(id));
         }
 
         public ActionResult Save(客戶資料 model)
         {
-            var msg = string.Empty;
+            var msg = "客戶資料" + (model.Id == 0 ? "新增" : "更新") + "成功";
             if (ModelState.IsValid)
             {
                 try
                 {
                     CompanyRepo.Save(model);
                     CompanyRepo.UnitOfWork.Commit();
-                    return Json(new { id = model.Id, isValid = true, message = HttpUtility.HtmlEncode("客戶資料" + (model.Id == 0 ? "新增" : "更新") + "成功") });
+                    return Json(new { id = model.Id, isValid = true, message = HttpUtility.HtmlEncode(msg) });
                 }
                 catch (Exception ex)
                 {
@@ -103,29 +91,50 @@ namespace MVC5HomeWork.Controllers
         public ActionResult Delete(int id)
         {
             var data = CompanyRepo.Find(id);
+            var DelMsg = "客戶資料不存在。";
             if (data != null)
             {
                 try
                 {
-                    foreach(var bankinfo in data.客戶銀行資訊)
-                    {
-                        BankRepo.Delete(bankinfo);
-                    }
-                    foreach(var contact in data.客戶聯絡人)
-                    {
-                        ContactRepo.Delete(contact);
-                    }
-
                     CompanyRepo.Delete(data);
                     CompanyRepo.UnitOfWork.Commit();
-                    return Json(new { isValid = true, message = HttpUtility.HtmlEncode("客戶資料刪除成功。") });
+                    DelMsg = "客戶資料刪除成功。";
                 }
                 catch (Exception ex)
                 {
-                    return Json(new { isValid = false, message = HttpUtility.HtmlEncode("客戶資料刪除失敗。錯誤訊息: " + ex.Message) });
+                    DelMsg = "客戶資料刪除失敗。錯誤訊息: " + ex.Message;
                 }
             }
-            return Json(new { isValid = false, message = HttpUtility.HtmlEncode("客戶資料不存在，請重新整理網頁。") });
+            TempData["DelMsg"] = DelMsg;
+            return RedirectToAction("Index");
         }
+        #endregion
+
+        #region 客戶聯絡人
+        public ActionResult ContactList(QueryContactModel model)
+        {
+            ViewBag.JobTitleList = new SelectList(ContactRepo.All().Select(p => new { JobTitle = p.職稱 }).Distinct(), "JobTitle", "JobTitle", model.JobTitle);
+            return PartialView(ContactRepo.Query(model));
+        }
+
+        public ActionResult BatchSaveContact(List<BatchContacts> model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    ContactRepo.BatchUpdate(model);
+                    ContactRepo.UnitOfWork.Commit();
+                    return Json(new { isValid = true, message = HttpUtility.HtmlEncode("客戶聯絡人資料更新成功") });
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { isValid = false, message = HttpUtility.HtmlEncode("客戶聯絡人儲存失敗。錯誤訊息: " + ex.Message) });
+                }
+            }
+            var msg = string.Join(" ", ModelState.Values.SelectMany(p => p.Errors).Select(p => p.ErrorMessage));
+            return Json(new { isValid = false, message = HttpUtility.HtmlEncode("客戶聯絡人儲存時，驗證欄位失敗。" + msg) });
+        }
+        #endregion
     }
 }

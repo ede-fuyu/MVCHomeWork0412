@@ -1,0 +1,112 @@
+﻿@model MVC5HomeWork.Models.客戶銀行資訊
+
+@{
+    ViewBag.Title = (Model.Id == 0 ? "新增" : "編輯") + "客戶銀行資訊";
+}
+@section breadcrumb {
+    <li><i class="icon-angle-right"></i><a href="#">客戶銀行資訊管理</a></li>
+    <li><i class="icon-angle-right"></i><a href="#">@ViewBag.Title</a></li>
+}
+<h2>@ViewBag.Title</h2>
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "formEdit", autocomplete = "off" }))
+{
+    <div class="form-horizontal">
+        @Html.HiddenFor(model => model.Id)
+        <div class="form-group">
+            @Html.LabelFor(model => model.客戶Id, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+            @if (Model.Id == 0)
+            {
+                @Html.DropDownListFor(model => model.客戶Id, (SelectList)ViewBag.Company, new { id = "dllConpanyName" })
+            }
+            else
+            {
+                @Html.HiddenFor(model => model.客戶Id)
+                @Html.Label(Model.客戶資料.客戶名稱)
+            }
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.銀行名稱, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.銀行名稱, new { htmlAttributes = new { @class = "form-control", id = "txtBankName" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.銀行代碼, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.銀行代碼, new { @class = "form-control", @Value = Model.銀行代碼 != 0 ? Model.銀行代碼.ToString().PadLeft(3, '0') : "", id = "txtBankCode" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.分行代碼, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.分行代碼, new { @class = "form-control", @Value = Model.分行代碼.HasValue ? Model.分行代碼.ToString().PadLeft(3, '0') : "", id = "txtSubCode" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.帳戶名稱, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.帳戶名稱, new { htmlAttributes = new { @class = "form-control", id = "txtAccountName" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.帳戶號碼, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.帳戶號碼, new { htmlAttributes = new { @class = "form-control", id = "txtAccountNum" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <button type="button" class="btn btn-primary" onclick="$('#formEdit').submit();">儲存</button>
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("回客戶銀行資訊清單", "Index", null, new { @class = "btn btn-default" })
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("#dllConpanyName").selectpicker({
+                liveSearch: true,
+                width: 280
+            });
+
+            $.validator.unobtrusive.parse("#formEdit");
+            $("#formEdit").makeValidationInline();
+            $("#formEdit").submit(function (e) {
+                e.preventDefault();
+                if ($("#formEdit").validate().valid()) {
+                    BlockUIWindow("...客戶銀行資訊儲存中...");
+                    $.ajax({
+                        url: "@Url.Action("Save")",
+                        type: 'POST',
+                        data: $("#formEdit").serialize(),
+                        success: function (data) {
+                            alert(data.message);
+                            if (data.isValid && $("#" + "@Html.IdFor(p => p.Id)").val() == 0) {
+                                if (confirm('是否繼續新增客戶銀行資訊?')) {
+                                    ResetForm("formEdit");
+                                } else {
+                                    $("#" + "@Html.IdFor(p => p.Id)").val(data.id);
+                                }
+                            }
+                            $.unblockUI();
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

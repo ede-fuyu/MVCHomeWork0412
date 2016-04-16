@@ -1,0 +1,90 @@
+﻿@model IEnumerable<MVC5HomeWork.Models.客戶銀行資訊>
+
+@{
+    ViewBag.Title = "客戶銀行資訊清單";
+    if (TempData["DelMsg"] != null)
+    {
+        <script>
+        alert('@TempData["DelMsg"]');
+        </script>
+    }
+}
+@section breadcrumb {
+    <li><i class="icon-angle-right"></i><a href="#">客戶銀行資訊管理</a></li>
+    <li><i class="icon-angle-right"></i><a href="#">@ViewBag.Title</a></li>
+}
+<h2>@ViewBag.Title</h2>
+
+@using (Html.BeginForm(null, null, FormMethod.Get, new { id = "formQuery", @class = "form-inline" }))
+{
+    <div class="form-group">
+        @Html.TextBox("BankName", "", new { @class = "form-control", placeholder = "請輸入銀行名稱" })
+    </div>
+    <button type="submit" class="btn btn-success" onclick="$('#Page').val(1); $('#formQuery').attr('action', '@Url.Action("Index", "BankInfo")')">查詢</button>
+    @Html.Partial("GridParam")
+    <div class="btn-group">
+        <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#">
+            匯出EXCEL <i class="fa fa-caret-down"></i>
+        </a>
+        <ul role="menu" class="dropdown-menu">
+            <li><a onclick="$('#formQuery').attr('action', '@Url.Action("ExportXLSList", "BankInfo")'); $('#formQuery').submit();" href="#">匯出XLS</a></li>
+            <li><a onclick="$('#formQuery').attr('action', '@Url.Action("ExportXLSXList", "BankInfo")'); $('#formQuery').submit();" href="#">匯出XLSX</a></li>
+        </ul>
+    </div>
+    @Html.ActionLink("新增客戶資料", "Create", null, new { @class = "btn btn-primary" })
+    <table class="table">
+        <tr>
+            <th>
+                <a class="sortbtn">@Html.DisplayNameFor(model => model.銀行名稱)</a>
+            </th>
+            <th>
+                <a class="sortbtn">@Html.DisplayNameFor(model => model.銀行代碼)</a>
+            </th>
+            <th>
+                <a class="sortbtn">@Html.DisplayNameFor(model => model.分行代碼)</a>
+            </th>
+            <th>
+                <a class="sortbtn">@Html.DisplayNameFor(model => model.帳戶名稱)</a>
+            </th>
+            <th>
+                <a class="sortbtn">@Html.DisplayNameFor(model => model.帳戶號碼)</a>
+            </th>
+            <th>
+                <a class="sortbtn">@Html.DisplayNameFor(model => model.客戶資料.客戶名稱)</a>
+            </th>
+            <th></th>
+        </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.銀行名稱)
+            </td>
+            <td>
+                @(item.銀行代碼 != 0 ? item.銀行代碼.ToString().PadLeft(3, '0') : "")
+            </td>
+            <td>
+                @(item.分行代碼.HasValue ? item.分行代碼.ToString().PadLeft(3, '0') : "")
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.帳戶名稱)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.帳戶號碼)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.客戶資料.客戶名稱)
+            </td>
+            <td>
+                @Html.ActionLink("編輯", "Edit", new { id = item.Id }, new { @class = "btn btn-xs btn-primary" })
+                @Html.ActionLink("檢視", "Details", new { id = item.Id }, new { @class = "btn btn-xs btn-warning" })
+                @Html.ActionLink("刪除", "Delete", new { id = item.Id }, new { @class = "btn btn-xs btn-danger" })
+            </td>
+        </tr>
+    }
+
+    </table>
+}
+
+@Html.PagedListPager(Model as IPagedList, p => Url.Action("Index", new { page = p }))

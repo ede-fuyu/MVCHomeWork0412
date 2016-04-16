@@ -4,6 +4,7 @@ using System.Linq.Dynamic;
 using System.Collections.Generic;
 using System.Web.Mvc;
 using System.Data.Entity;
+using PagedList;
 
 namespace MVC5HomeWork.Models
 {   
@@ -29,10 +30,6 @@ namespace MVC5HomeWork.Models
         public IQueryable<客戶資料> Query(QueryCompanyModel model)
         {
             var data = this.All();
-            if (!string.IsNullOrEmpty(model.CompanyNo))
-            {
-                data = data.Where(p => p.統一編號 == model.CompanyNo);
-            }
             if (!string.IsNullOrEmpty(model.CompanyName))
             {
                 data = data.Where(p => p.客戶名稱.Contains(model.CompanyName));
@@ -48,6 +45,12 @@ namespace MVC5HomeWork.Models
             }
 
             return data.AsQueryable();
+        }
+
+        public IPagedList<客戶資料> Query(QueryCompanyModel model, int DefaultPageSite)
+        {
+            var data = this.Query(model);
+            return data.ToPagedList(model.Page ?? 1, model.PageSite ?? DefaultPageSite);
         }
 
         public 客戶資料 Find(int id)
@@ -71,12 +74,31 @@ namespace MVC5HomeWork.Models
             else
             {
                 var context = (客戶資料Entities)this.UnitOfWork.Context;
+                var accountInfo = context.客戶資料.Where(p => p.Id == entity.Id).Select(p => new { p.帳號, p.密碼 }).FirstOrDefault();
+                if(accountInfo!= null && !string.IsNullOrEmpty(accountInfo.帳號))
+                {
+                    entity.帳號 = accountInfo.帳號;
+                    entity.密碼 = accountInfo.密碼;
+                }
                 context.Entry(entity).State = EntityState.Modified;
             }
         }
 
         public override void Delete(客戶資料 entity)
         {
+            var context = (客戶資料Entities)this.UnitOfWork.Context;
+            foreach (var bankid in entity.客戶銀行資訊.Select(p => p.Id))
+            {
+                var bankinfo = context.客戶銀行資訊.Find(bankid);
+                bankinfo.IsDelete = true;
+                context.Entry(bankinfo).State = EntityState.Modified;
+            }
+            foreach (var contactid in entity.客戶聯絡人.Select(p => p.Id))
+            {
+                var contact = context.客戶銀行資訊.Find(contactid);
+                contact.IsDelete = true;
+                context.Entry(contact).State = EntityState.Modified;
+            }
             entity.IsDelete = true;
             this.Save(entity);
         }
@@ -99,17 +121,9 @@ namespace MVC5HomeWork.Models
             return base.ExportXLSX(entities, notCol.ToArray());
         }
 
-        internal dynamic SetClient(int companyid)
+        internal SelectList CompanyNameList(int companyid)
         {
-            if (companyid == 0)
-            {
-                return new SelectList(this.All().Select(p => new { value = p.Id, text = p.客戶名稱 }), "value", "text");
-            }
-            else
-            {
-                var company = this.Find(companyid);
-                return company == null ? "" : company.客戶名稱;
-            }
+            return new SelectList(this.All().Select(p => new { value = p.Id, text = p.客戶名稱 }), "value", "text");
         }
     }
 

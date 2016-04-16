@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - My ASP.NET Application</title>
     @Styles.Render("~/Content/css")
+    @Styles.Render("~/Content/fontawesome")
+    @Styles.Render("~/Content/jqueryval")
     @Scripts.Render("~/bundles/modernizr")
 
     <meta name="description" content="The description of my page" />
@@ -31,15 +33,64 @@
         </div>
     </div>
     <div class="container body-content">
+        <ul class="breadcrumb">
+            <li>
+                <i class="icon-home"></i>
+                <a href="@Url.Action("Index", "Home")">Home</a>
+            </li>
+            @RenderSection("breadcrumb", false)
+            @if (!IsSectionDefined("breadcrumb"))
+            {
+                <li><a href="#">N/A</a></li>
+            }
+        </ul>
         @RenderBody()
         <hr />
         <footer>
             <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
         </footer>
     </div>
-
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/site")
+    <script type="text/javascript">
+        $(function () {
+            $(".selectpicker").selectpicker();
+
+            $('.pagination a').on('click', function () {
+                var href = $(this).attr("href").split("?page=");
+                $("#Page").val(href[1]);
+                $("#formQuery").submit();
+                return false;
+            });
+
+            $('table a.sortbtn').on('click', function () {
+                var thisCol = $(this).attr("data-sort");
+                if (thisCol === undefined) {
+                    thisCol = $(this).text();
+                }
+                if ($("#sort").val() == thisCol) {
+                    if ($("#sidx").val() == "desc") {
+                        $("#sidx").val("asc");
+                    } else {
+                        $("#sidx").val("desc");
+                    }
+                } else {
+                    $("#sidx").val("asc");
+                    $("#sort").val(thisCol);
+                }
+                $("#formQuery").submit();
+                return false;
+            });
+
+            $(".Phone").attr('data-rule-phoneTest', "手機格式輸入錯誤");
+            $.validator.addMethod("phoneTest", function (value, element) {
+                var phone = /^\d{4}-\d{6}$/;
+                return value == '' || phone.test(value);
+            }, function (msg) { return msg });
+        });
+    </script>
     @RenderSection("scripts", required: false)
 </body>
 </html>

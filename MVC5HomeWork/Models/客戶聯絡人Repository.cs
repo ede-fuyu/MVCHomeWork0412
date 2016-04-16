@@ -3,6 +3,7 @@ using System.Linq;
 using System.Linq.Dynamic;
 using System.Collections.Generic;
 using System.Data.Entity;
+using PagedList;
 
 namespace MVC5HomeWork.Models
 {   
@@ -28,11 +29,11 @@ namespace MVC5HomeWork.Models
         public IQueryable<客戶聯絡人> Query(QueryContactModel model)
         {
             var data = this.All();
-
-            if (!string.IsNullOrEmpty(model.CompanyNo))
+            if (model.CompanyId.HasValue)
             {
-                data = data.Where(p => p.客戶資料.統一編號 == model.CompanyNo);
+                data = data.Where(p => p.客戶Id == model.CompanyId);
             }
+
             if (!string.IsNullOrEmpty(model.CompanyName))
             {
                 data = data.Where(p => p.客戶資料.客戶名稱.Contains(model.CompanyName));
@@ -42,9 +43,9 @@ namespace MVC5HomeWork.Models
                 data = data.Where(p => p.姓名.Contains(model.ContactName));
             }
 
-            if (!string.IsNullOrEmpty(model.selectJob))
+            if (!string.IsNullOrEmpty(model.JobTitle))
             {
-                data = data.Where(p => p.職稱 == model.selectJob);
+                data = data.Where(p => p.職稱 == model.JobTitle);
             }
 
             if (!string.IsNullOrEmpty(model.sort))
@@ -57,6 +58,12 @@ namespace MVC5HomeWork.Models
             }
 
             return data.AsQueryable();
+        }
+
+        public IPagedList<客戶聯絡人> Query(QueryContactModel model, int DefaultPageSite)
+        {
+            var data = this.Query(model);
+            return data.ToPagedList(model.Page ?? 1, model.PageSite ?? DefaultPageSite);
         }
 
         public IQueryable<客戶聯絡人> Query(int companyid, GridModel param)
@@ -78,18 +85,6 @@ namespace MVC5HomeWork.Models
             else
             {
                 return new 客戶聯絡人();
-            }
-        }
-
-        public 客戶聯絡人 Find(int companyid, int contactid)
-        {
-            if (contactid != 0)
-            {
-                return this.All().FirstOrDefault(p => p.Id == contactid && p.客戶Id == companyid);
-            }
-            else
-            {
-                return new 客戶聯絡人() { 客戶Id = companyid };
             }
         }
 

@@ -1,0 +1,128 @@
+﻿@using MVC5HomeWork.Models
+@model 客戶資料
+
+@{
+    ViewBag.Title = "客戶資料";
+}
+@section breadcrumb {
+    <li><i class="icon-angle-right"></i><a href="#">客戶資料管理</a></li>
+    <li><i class="icon-angle-right"></i><a href="#">@ViewBag.Title</a></li>
+}
+<h2>客戶資料</h2>
+
+<div>
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.客戶分類)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.客戶分類)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.客戶名稱)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.客戶名稱)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.統一編號)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.統一編號)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.電話)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.電話)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.傳真)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.傳真)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.地址)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.地址)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("編輯客戶資料", "Edit", new { id = Model.Id }, new { @class = "btn btn-primary" })
+    @Html.ActionLink("回客戶資料清單", "Index", null, new { @class = "btn btn-default" })
+</p>
+
+<div class="panel panel-default" style="margin-top: 15px;">
+    <div class="panel-heading">
+        <h4>客戶聯絡人清單</h4>
+        <div class="pull-right" style="margin-top: -37px;">
+            <button type="button" class="btn btn-primary" onclick="$('#formEdit').submit();">更新聯絡人資料</button>
+        </div>
+    </div>
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "formEdit", autocomplete = "off" }))
+    {
+        <div id="ContactList" class="panel-body">
+            @Html.Action("ContactList", new { model = new QueryContactModel() { CompanyId = Model.Id } })
+        </div>
+    }
+</div>
+
+
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $.validator.unobtrusive.parse("#formEdit");
+            $("#formEdit").makeValidationInline();
+            $("#formEdit").submit(function (e) {
+                e.preventDefault();
+                if ($("#formEdit").validate().valid()) {
+                    BlockUIWindow("...聯絡人資料儲存中...");
+                    var model = {};
+                    $(".ContactData").each(function (i) {
+                        var data = {};
+                        $(".ContactData input").each(function () {
+                            var elem = $(this).attr("id").split('_');
+                            var j = elem[1];
+                            if (i == j) {
+                                data[elem[3]] = this.value;
+                            }
+                        });
+                        model[i] = data;
+                    });
+                    $.ajax({
+                        url: "@Url.Action("BatchSaveContact")",
+                        type: 'POST',
+                        data: { model: model },
+                        success: function (data) {
+                            alert(data.message);
+                            $.unblockUI();
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

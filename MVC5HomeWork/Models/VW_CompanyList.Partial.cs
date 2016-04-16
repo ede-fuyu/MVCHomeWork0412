@@ -12,6 +12,7 @@ namespace MVC5HomeWork.Models
     public partial class VW_CompanyListMetaData
     {
         public int Id { get; set; }
+        [Display(Name = "客戶名稱")]
         public string CompanyName { get; set; }
         public Nullable<int> 銀行帳戶數量 { get; set; }
         public Nullable<int> 聯絡人數量 { get; set; }

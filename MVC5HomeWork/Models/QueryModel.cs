@@ -10,20 +10,19 @@ namespace MVC5HomeWork.Models
     {
         public string sort { get; set; }
         public string sidx { get; set; }
-        public int page { get; set; }
-        public int pagesite { get; set; }
+        public int? Page { get; set; }
+        public int? PageSite { get; set; }
     }
 
     public class QueryCompanyModel : GridModel
     {
+        public int? CompanyId { get; set; }
+
         [Display(Name = "客戶名稱")]
         public string CompanyName { get; set; }
 
-        [Display(Name = "統一編號")]
-        public string CompanyNo { get; set; }
-
         [Display(Name = "客戶分類")]
-        public Nullable<int> CompanyType { get; set; }
+        public string CompanyType { get; set; }
 
     }
 
@@ -31,12 +30,6 @@ namespace MVC5HomeWork.Models
     {
         [Display(Name = "銀行名稱")]
         public string BankName { get; set; }
-
-        [Display(Name = "銀行代碼")]
-        public int? BankNo { get; set; }
-
-        [Display(Name = "帳戶名稱")]
-        public string AccountName { get; set; }
     }
 
     public class QueryContactModel : QueryCompanyModel
@@ -44,6 +37,7 @@ namespace MVC5HomeWork.Models
         [Display(Name = "聯絡人姓名")]
         public string ContactName { get; set; }
 
-        public string selectJob { get; set; }
+        [Display(Name = "職稱")]
+        public string JobTitle { get; set; }
     }
 }

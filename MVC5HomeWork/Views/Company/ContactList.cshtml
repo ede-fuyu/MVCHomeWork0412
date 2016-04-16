@@ -1,0 +1,46 @@
+﻿@model IEnumerable<MVC5HomeWork.Models.客戶聯絡人>
+@{
+    var data = Model.ToList();
+}
+
+<table class="table" id="taDataHead">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(p => p.職稱)
+        </th>
+        <th>
+            @Html.DisplayNameFor(p => p.姓名)
+        </th>
+        <th>
+            @Html.DisplayNameFor(p => p.Email)
+        </th>
+        <th>
+            @Html.DisplayNameFor(p => p.手機)
+        </th>
+        <th>
+            @Html.DisplayNameFor(p => p.電話)
+        </th>
+    </tr>
+
+@for (int i = 0; i < data.Count(); i++)
+{
+    <tr class="ContactData">
+        <td>
+            @Html.HiddenFor(m => data[i].Id)
+            @Html.TextBoxFor(m => data[i].職稱, new { @class = "form-control", id = "txt_" + i.ToString() + "__JobTitle" })
+        </td>
+        <td>
+            @Html.DisplayFor(m => data[i].姓名)
+        </td>
+        <td>
+            @Html.DisplayFor(m => data[i].Email)
+        </td>
+        <td>
+            @Html.TextBoxFor(m => data[i].手機, new { @class = "form-control Phone", id = "txt_" + i.ToString() + "__Phone" })
+        </td>
+        <td>
+            @Html.TextBoxFor(m => data[i].電話, new { @class = "form-control", id = "txt_" + i.ToString()+ "__Tel" })
+        </td>
+    </tr>
+}
+</table>

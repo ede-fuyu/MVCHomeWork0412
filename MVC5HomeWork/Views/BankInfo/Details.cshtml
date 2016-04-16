@@ -1,0 +1,67 @@
+﻿@model MVC5HomeWork.Models.客戶銀行資訊
+
+@{
+    ViewBag.Title = "客戶銀行資訊";
+}
+@section breadcrumb {
+    <li><i class="icon-angle-right"></i><a href="#">客戶銀行資訊管理</a></li>
+    <li><i class="icon-angle-right"></i><a href="#">@ViewBag.Title</a></li>
+}
+<h2>客戶銀行資訊</h2>
+
+<div>
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.銀行名稱)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.銀行名稱)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.銀行代碼)
+        </dt>
+
+        <dd>
+            @(Model.銀行代碼 != 0 ? Model.銀行代碼.ToString().PadLeft(3, '0') : "")
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.分行代碼)
+        </dt>
+
+        <dd>
+            @(Model.分行代碼.HasValue ? Model.分行代碼.ToString().PadLeft(3, '0') : "")
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.帳戶名稱)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.帳戶名稱)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.帳戶號碼)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.帳戶號碼)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.客戶資料.客戶分類)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.客戶資料.客戶分類)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("編輯客戶資料", "Edit", new { id = Model.Id }, new { @class = "btn btn-primary" })
+    @Html.ActionLink("回客戶資料清單", "Index", null, new { @class = "btn btn-default" })
+</p>

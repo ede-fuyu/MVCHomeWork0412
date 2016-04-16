@@ -11,15 +11,10 @@ namespace MVC5HomeWork.Controllers
 {
     public class BankInfoController : BaseController
     {
-        // GET: HomeWork/BankInfo
-        public ActionResult Index()
+        // GET: /BankInfo
+        public ActionResult Index(QueryBankModel model)
         {
-            return View();
-        }
-
-        public ActionResult QueryList(QueryBankModel model)
-        {
-            return PartialView(BankRepo.Query(model));
+            return View(BankRepo.Query(model, 1));
         }
 
         public ActionResult ExportXLSList(QueryBankModel model)
@@ -32,37 +27,37 @@ namespace MVC5HomeWork.Controllers
             return File(BankRepo.ExportXLSX(BankRepo.Query(model)), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "客戶銀行資料.xlsx");
         }
 
-        public ActionResult QueryBankList (int id)
+        public ActionResult Create()
         {
-            return PartialView(BankRepo.Query(id));
+            ViewBag.Company = CompanyRepo.CompanyNameList(0);
+            return View("Edit", BankRepo.Find(0));
         }
 
-        public ActionResult Edit(int companyid, int bankid)
+        public ActionResult Edit(int id)
         {
-            ViewBag.Client =  CompanyRepo.SetClient(companyid);
-            return PartialView(BankRepo.Find(companyid, bankid));
+            return View(BankRepo.Find(id));
         }
 
-        public ActionResult Detail(int companyid, int bankid)
+        [HandleError(ExceptionType = typeof(ArgumentException), View = "Error2")]
+        public ActionResult Details(int id)
         {
-            if (bankid == 0)
+            if (id == 0)
             {
-                return PartialView(null);
+                throw new ArgumentException("參數錯誤");
             }
-            ViewBag.Client = CompanyRepo.SetClient(companyid);
-            return PartialView(BankRepo.Find(companyid, bankid));
+            return View(BankRepo.Find(id));
         }
 
         public ActionResult Save(客戶銀行資訊 model)
         {
-            var msg = string.Empty;
+            var msg = "客戶銀行資訊" + (model.Id == 0 ? "新增" : "更新") + "成功";
             if (ModelState.IsValid)
             {
                 try
                 {
                     BankRepo.Save(model);
                     BankRepo.UnitOfWork.Commit();
-                    return Json(new { id = model.Id, isValid = true, message = HttpUtility.HtmlEncode("客戶銀行資訊" + (model.Id == 0 ? "新增" : "更新") + "成功") });
+                    return Json(new { id = model.Id, isValid = true, message = HttpUtility.HtmlEncode(msg) });
                 }
                 catch (Exception ex)
                 {
@@ -76,20 +71,22 @@ namespace MVC5HomeWork.Controllers
         public ActionResult Delete(int id)
         {
             var data = BankRepo.Find(id);
+            var DelMsg = "客戶銀行資訊不存在。";
             if (data != null)
             {
                 try
                 {
                     BankRepo.Delete(data);
                     BankRepo.UnitOfWork.Commit();
-                    return Json(new { isValid = true, companyid = data.客戶Id, message = HttpUtility.HtmlEncode("客戶銀行資訊刪除成功。") });
+                    DelMsg = "客戶銀行資訊刪除成功。";
                 }
                 catch (Exception ex)
                 {
-                    return Json(new { isValid = false, message = HttpUtility.HtmlEncode("客戶銀行資訊刪除失敗。錯誤訊息: " + ex.Message) });
+                    DelMsg = "客戶銀行資訊刪除失敗。錯誤訊息: " + ex.Message;
                 }
             }
-            return Json(new { isValid = false, message = HttpUtility.HtmlEncode("客戶銀行資訊不存在，請重新整理網頁。") });
+            TempData["DelMsg"] = DelMsg;
+            return RedirectToAction("Index");
         }
     }
 }

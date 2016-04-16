@@ -1,0 +1,67 @@
+﻿@model MVC5HomeWork.Models.客戶聯絡人
+
+@{
+    ViewBag.Title = "客戶聯絡人";
+}
+@section breadcrumb {
+    <li><i class="icon-angle-right"></i><a href="#">客戶聯絡人管理</a></li>
+    <li><i class="icon-angle-right"></i><a href="#">@ViewBag.Title</a></li>
+}
+<h2>客戶聯絡人</h2>
+
+<div>
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.職稱)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.職稱)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.姓名)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.姓名)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.手機)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.手機)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.電話)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.電話)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.客戶資料.客戶分類)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.客戶資料.客戶分類)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("編輯客戶資料", "Edit", new { id = Model.Id }, new { @class = "btn btn-primary" })
+    @Html.ActionLink("回客戶資料清單", "Index", null, new { @class = "btn btn-default" })
+</p>
