@@ -21,12 +21,14 @@ namespace MVC5HomeWork.Controllers
 
         public ActionResult ExportXLSList(QueryContactModel model)
         {
-            return File(ContactRepo.ExportXLS(ContactRepo.Query(model)), "application/vnd.ms-excel", "客戶聯絡人資料.xls");
+            var contactData = ContactRepo.Query(model);
+            return File(ContactRepo.ExportXLS(contactData), "application/vnd.ms-excel", "客戶聯絡人資料.xls");
         }
 
         public ActionResult ExportXLSXList(QueryContactModel model)
         {
-            return File(ContactRepo.ExportXLSX(ContactRepo.Query(model)), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "客戶聯絡人資料.xlsx");
+            var contactData = ContactRepo.Query(model);
+            return File(ContactRepo.ExportXLSX(contactData), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "客戶聯絡人資料.xlsx");
         }
 
         public ActionResult Create()

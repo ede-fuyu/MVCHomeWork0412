@@ -27,10 +27,10 @@ namespace MVC5HomeWork.Models
             return data.AsQueryable();
         }
 
-        public IPagedList<VW_CompanyList> Query(QueryCompanyModel model, int DefaultPageSite)
+        public IPagedList<VW_CompanyList> Query(QueryCompanyModel model, int DefaultPage)
         {
             var data = this.Query(model);
-            return data.ToPagedList(model.Page ?? 1, model.PageSite ?? DefaultPageSite);
+            return data.ToPagedList(model.Page ?? DefaultPage, model.PageSite ?? DefaultPage);
         }
 
         public override byte[] ExportXLS(IQueryable<VW_CompanyList> entities, params string[] notExportCol)

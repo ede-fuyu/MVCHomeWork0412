@@ -46,10 +46,10 @@ namespace MVC5HomeWork.Models
             return data.AsQueryable();
         }
 
-        public IPagedList<客戶銀行資訊> Query(QueryBankModel model, int DefaultPageSite)
+        public IPagedList<客戶銀行資訊> Query(QueryBankModel model, int DefaultPage)
         {
             var data = this.Query(model);
-            return data.ToPagedList(model.Page ?? 1, model.PageSite ?? DefaultPageSite);
+            return data.ToPagedList(model.Page ?? DefaultPage, model.PageSite ?? DefaultPage);
         }
 
         public IQueryable<客戶銀行資訊> Query(int companyid)
@@ -59,13 +59,13 @@ namespace MVC5HomeWork.Models
 
         public 客戶銀行資訊 Find(int id)
         {
-            if (id != 0)
+            if (id == 0)
             {
-                return this.All().FirstOrDefault(p => p.Id == id);
+                return new 客戶銀行資訊();
             }
             else
             {
-                return new 客戶銀行資訊();
+                return this.All().FirstOrDefault(p => p.Id == id);
             }
         }
 

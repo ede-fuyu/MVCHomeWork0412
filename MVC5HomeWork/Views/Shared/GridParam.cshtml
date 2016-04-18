@@ -1,4 +1,4 @@
-﻿@Html.Hidden("sort")
+﻿@Html.Hidden("sort") 
 @Html.Hidden("sidx")
 @Html.Hidden("Page")
 @Html.DropDownList("PageSite", new[] {
@@ -7,4 +7,4 @@
         new SelectListItem { Text = "每頁顯示10筆資料", Value = "10" },
         new SelectListItem { Text = "每頁顯示20筆資料", Value = "20" },
         new SelectListItem { Text = "每頁顯示50筆資料", Value = "50" }
-    }, new { onchange = "this.form.submit()", @class="selectpicker" })
+    }, new { onchange = "$('#Page').val(1);this.form.submit();", @class="selectpicker" })

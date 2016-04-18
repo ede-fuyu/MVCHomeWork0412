@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Web.Mvc;
 using System.Data.Entity;
 using PagedList;
+using System.Web.Security;
 
 namespace MVC5HomeWork.Models
 {   
@@ -47,21 +48,21 @@ namespace MVC5HomeWork.Models
             return data.AsQueryable();
         }
 
-        public IPagedList<客戶資料> Query(QueryCompanyModel model, int DefaultPageSite)
+        public IPagedList<客戶資料> Query(QueryCompanyModel model, int DefaultPage)
         {
             var data = this.Query(model);
-            return data.ToPagedList(model.Page ?? 1, model.PageSite ?? DefaultPageSite);
+            return data.ToPagedList(model.Page ?? DefaultPage, model.PageSite ?? DefaultPage);
         }
 
         public 客戶資料 Find(int id)
         {
-            if (id != 0)
+            if (id == 0)
             {
-                return this.All().FirstOrDefault(p => p.Id == id);
+                return new 客戶資料();
             }
             else
             {
-                return new 客戶資料();
+                return this.All().FirstOrDefault(p => p.Id == id);
             }
         }
 
@@ -105,29 +106,33 @@ namespace MVC5HomeWork.Models
 
         internal void Register(RegisterViewModel data, string password)
         {
-            var context = (客戶資料Entities)this.UnitOfWork.Context;
-            var userCompanyData = context.客戶資料.Where(p => p.統一編號 == data.CompanyNo).First();
+            var userCompanyData = this.All().Where(p => p.統一編號 == data.CompanyNo).First();
             userCompanyData.帳號 = data.Account;
             userCompanyData.密碼 = password;
-            context.Entry(userCompanyData).State = EntityState.Modified;
         }
 
-        internal void EditProfile(客戶資料 data, string userAcction)
+        internal 客戶資料 FindAccount(string userAccount)
         {
-            var context = (客戶資料Entities)this.UnitOfWork.Context;
-            var userCompanyData = context.客戶資料.Where(p => p.帳號 == userAcction).First();
+            return this.All(isAll: (userAccount == "admin")).First(p => p.帳號 == userAccount);
+        }
+
+        internal void EditProfile(客戶資料 data, string userAccount)
+        {
+            //var context = (客戶資料Entities)this.UnitOfWork.Context;
+            var userCompanyData = this.FindAccount(userAccount);
             userCompanyData.電話 = data.電話;
             userCompanyData.傳真 = data.傳真;
             userCompanyData.地址 = data.地址;
             userCompanyData.Email = data.Email;
-            context.Entry(userCompanyData).State = EntityState.Modified;
+            //context.Entry(userCompanyData).State = EntityState.Modified;
         }
 
         internal void EditPassWd(string Password, string userAcction)
         {
+            var strPassword = FormsAuthentication.HashPasswordForStoringInConfigFile(Password + userAcction, "SHA1");
             var context = (客戶資料Entities)this.UnitOfWork.Context;
             var userCompanyData = context.客戶資料.Where(p => p.帳號 == userAcction).First();
-            userCompanyData.密碼 = Password;
+            userCompanyData.密碼 = strPassword;
             context.Entry(userCompanyData).State = EntityState.Modified;
         }
 

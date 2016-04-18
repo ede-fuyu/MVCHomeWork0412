@@ -19,12 +19,14 @@ namespace MVC5HomeWork.Controllers
 
         public ActionResult ExportXLSList(QueryCompanyModel model)
         {
-            return File(ListRepo.ExportXLS(ListRepo.Query(model)), "application/vnd.ms-excel", "客戶清單資料.xls");
+            var companyListData = ListRepo.Query(model);
+            return File(ListRepo.ExportXLS(companyListData), "application/vnd.ms-excel", "客戶清單資料.xls");
         }
 
         public ActionResult ExportXLSXList(QueryCompanyModel model)
         {
-            return File(ListRepo.ExportXLSX(ListRepo.Query(model)), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "客戶清單資料.xlsx");
+            var companyListData = ListRepo.Query(model);
+            return File(ListRepo.ExportXLSX(companyListData), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "客戶清單資料.xlsx");
         }
         #endregion
 
@@ -33,17 +35,19 @@ namespace MVC5HomeWork.Controllers
         public ActionResult Index(QueryCompanyModel model)
         {
             ViewBag.CompanyType = new SelectList(CompanyRepo.All().Select(p => new { CompanyType = p.客戶分類 }).Distinct(), "CompanyType", "CompanyType", model.CompanyType);
-            return View(CompanyRepo.Query(model, 5));
+            return View(CompanyRepo.Query(model, 1));
         }
 
         public ActionResult ExportXLSDataList(QueryCompanyModel model)
         {
-            return File(CompanyRepo.ExportXLS(CompanyRepo.Query(model)), "application/vnd.ms-excel", "客戶資料.xls");
+            var companyData = CompanyRepo.Query(model);
+            return File(CompanyRepo.ExportXLS(companyData), "application/vnd.ms-excel", "客戶資料.xls");
         }
 
         public ActionResult ExportXLSXDataList(QueryCompanyModel model)
         {
-            return File(CompanyRepo.ExportXLSX(CompanyRepo.Query(model)), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "客戶資料.xlsx");
+            var companyData = CompanyRepo.Query(model);
+            return File(CompanyRepo.ExportXLSX(companyData), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "客戶資料.xlsx");
         }
 
         public ActionResult Create()

@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Linq;
 using System.Collections.Generic;
 	
@@ -11,7 +11,7 @@ namespace MVC5HomeWork.Models
             var data = base.All();
             if (!string.IsNullOrEmpty(model.CompanyName))
             {
-                //data = data.Where(p => p.«È¤á¦WºÙ.Contains(model.CompanyName));
+                data = data.Where(p => p.å®¢æˆ¶åç¨±.Contains(model.CompanyName));
             }
             return data.AsQueryable();
         }

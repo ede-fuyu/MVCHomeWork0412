@@ -60,10 +60,10 @@ namespace MVC5HomeWork.Models
             return data.AsQueryable();
         }
 
-        public IPagedList<客戶聯絡人> Query(QueryContactModel model, int DefaultPageSite)
+        public IPagedList<客戶聯絡人> Query(QueryContactModel model, int DefaultPage)
         {
             var data = this.Query(model);
-            return data.ToPagedList(model.Page ?? 1, model.PageSite ?? DefaultPageSite);
+            return data.ToPagedList(model.Page ?? DefaultPage, model.PageSite ?? DefaultPage);
         }
 
         public IQueryable<客戶聯絡人> Query(int companyid, GridModel param)
@@ -80,11 +80,11 @@ namespace MVC5HomeWork.Models
         {
             if (id != 0)
             {
-                return this.All().FirstOrDefault(p => p.Id == id);
+                return new 客戶聯絡人();
             }
             else
             {
-                return new 客戶聯絡人();
+                return this.All().FirstOrDefault(p => p.Id == id);
             }
         }
 

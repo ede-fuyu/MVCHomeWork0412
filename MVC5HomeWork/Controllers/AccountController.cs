@@ -80,17 +80,10 @@ namespace MVC5HomeWork.Controllers
         {
             if (ModelState.IsValid)
             {
-                try
-                {
-                    string strPassword = FormsAuthentication.HashPasswordForStoringInConfigFile(data.PassWord + User.Identity.Name.ToLower(), "SHA1");
-                    CompanyRepo.Register(data, strPassword);
-                    CompanyRepo.UnitOfWork.Commit();
-                    return RedirectToAction("Login", "Account");
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError(string.Empty, ex.Message);
-                }
+                string strPassword = FormsAuthentication.HashPasswordForStoringInConfigFile(data.PassWord + User.Identity.Name.ToLower(), "SHA1");
+                CompanyRepo.Register(data, strPassword);
+                CompanyRepo.UnitOfWork.Commit();
+                return RedirectToAction("Login", "Account");
             }
             return View();
         }
@@ -100,7 +93,7 @@ namespace MVC5HomeWork.Controllers
         [Authorize]
         public ActionResult EditProfile()
         {
-            return View(CompanyRepo.All(User.Identity.Name.ToLower() == "admin").Where(p => p.帳號 == User.Identity.Name).First());
+            return View(CompanyRepo.FindAccount(User.Identity.Name));
         }
 
         [Authorize]
@@ -109,17 +102,9 @@ namespace MVC5HomeWork.Controllers
         {
             if (ModelState.IsValid)
             {
-                try
-                {
-                    CompanyRepo.EditProfile(data, User.Identity.Name);
-                    CompanyRepo.UnitOfWork.Commit();
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError(string.Empty, ex.Message);
-                }
+                CompanyRepo.EditProfile(data, User.Identity.Name);
+                CompanyRepo.UnitOfWork.Commit();
             }
-
             return View(data);
         }
 
@@ -134,18 +119,10 @@ namespace MVC5HomeWork.Controllers
         {
             if (ModelState.IsValid)
             {
-                try
-                {
-                    string strPassword = FormsAuthentication.HashPasswordForStoringInConfigFile(data.PassWord + User.Identity.Name.ToLower(), "SHA1");
-                    CompanyRepo.EditPassWd(strPassword, User.Identity.Name);
-                    CompanyRepo.UnitOfWork.Commit();
-                    FormsAuthentication.SignOut();
-                    return RedirectToAction("Login", "Account");
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError(string.Empty, ex.Message);
-                }
+                CompanyRepo.EditPassWd(data.nPassWord, User.Identity.Name);
+                CompanyRepo.UnitOfWork.Commit();
+                FormsAuthentication.SignOut();
+                return RedirectToAction("Login", "Account");
             }
             return View(data);
         }
